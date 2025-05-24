@@ -27,7 +27,7 @@ A RESTful API built with Node.js, Express, and MongoDB. Features include user au
 
 1. Clone the repository:
    \`\`\`bash
-   git clone https://github.com/YourUsername/NodeRestAPI.git
+   git clone https://github.com/arijitsarkar28/NodeRestAPI.git
    cd NodeRestAPI
    \`\`\`
 

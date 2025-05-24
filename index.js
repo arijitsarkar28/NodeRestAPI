@@ -1,5 +1,4 @@
 const path = require('path');
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -7,9 +6,7 @@ const multer = require('multer');
 
 const feedRoutes = require('./routes/feed');
 const authRoutes = require('./routes/auth');
-
-const MONGODB_URI =
-  'mongodb+srv://Arijit:password1234@cluster0.cgbus91.mongodb.net/messages?retryWrites=true&w=majority&appName=Cluster0';
+const config = require('./config');
 
 const app = express();
 
@@ -34,12 +31,9 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single('image')); // image is the name of the field in the form
-// app.use(bodyParser.urlencoded({ extended: false })); // application/x-www-form-urlencoded
-
-app.use(bodyParser.json()); // application/json
-
-app.use('/images', express.static(path.join(__dirname, 'images'))); // Serve static files from the 'images' directory
+app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single('image'));
+app.use(bodyParser.json());
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -60,16 +54,15 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-  .connect(MONGODB_URI)
+  .connect(config.MONGODB_URI)
   .then(() => {
     console.log('Connected to MongoDB');
-    const server = app.listen(8080);
+    const server = app.listen(8080, () => {
+      console.log('Server is running on port 8080');
+    });
     const io = require('./socket').init(server);
-    io.on('connection', (socket) => {
+    io.on('connection', () => {
       console.log('Client connected');
-      //   socket.on('disconnect', () => {
-      //     console.log('Client disconnected');
-      //   });
     });
   })
   .catch((err) => {
